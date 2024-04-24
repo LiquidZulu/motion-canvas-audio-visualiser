@@ -1,0 +1,72 @@
+#+title: Motion Canvas Audio Visualiser
+
+Audio visualisation with [[https://motioncanvas.io][Motion Canvas]] and [[https://github.com/bbc/audiowaveform/][audiowaveform]].
+
+* Guide
+For the purposes of this guide, I will use =src/data/test.mp3=.
+
+** Get The Sample Rate
+You can acquire the sample rate using =ffprobe=:
+#+begin_src shell
+ffprobe src/data/test.mp3
+#+end_src
+
+Which should yield something like:
+#+begin_export ascii
+ffprobe version 5.1.3 Copyright (c) 2007-2022 the FFmpeg developers
+  built with gcc 12.2.0 (GCC)
+  configuration: ...
+Input #0, mp3, from 'src/data/test.mp3':
+  Duration: 00:00:03.79, start: 0.025057, bitrate: 85 kb/s
+  Stream #0:0: Audio: mp3, 44100 Hz, mono, fltp, 85 kb/s
+#+end_export
+
+Here, we can see that =test.mp3= is at 44100 Hz, but we do not need anywhere close to this resolution. I find that about 5 samples a second works for me, so I would use 44100 / 5 = 8820 for the next step.
+
+** Process the Audio with =audiowaveform=
+#+begin_src shell
+audiowaveform -i src/data/test.mp3 -o src/data/test.mp3.json -z 8820
+#+end_src
+
+The =-z 8820= argument refers to the level of "zoom," or how many samples should be used for a single entry into the new JSON file. This should be calculated based upon the [[Get The Sample Rate][sample rate]].
+
+** Import The Processed Audio Into Motion Canvas
+See =src/scenes/visualiser.tsx= for example usage. =src/index.ts= provides an =audiowaveformAmplitudes= function to more easily use the data in Motion Canvas; this function takes an audiowaveform JSON and provides an array of amplitudes between 0 and 1, which can then be used to drive whatever animation.
+
+For example, I can create an opacity signal:
+#+begin_src typescript
+import audioJSON from "../data/test.mp3.json";
+const amplitudes = audiowaveformAmplitudes(audioJSON);
+const opacity = createSignal(amplitudes[0]);
+#+end_src
+
+And use that opacity for a ring around an image:
+#+begin_src tsx
+export default makeScene2D(function* (view) {
+  ...
+
+  view.add(
+    <Circle
+      width={256}
+      height={256}
+      stroke={createSignal(() => new Color(0x23a559).alpha(opacity()))}
+      lineWidth={32}
+    >
+      <Img src={thumb} width={256} radius={128} />
+    </Circle>
+  );
+  ...
+};
+#+end_src
+
+Which can then be updated according to how long each timestep is based on the [[Get The Sample Rate][sample rate]]:
+#+begin_src typescript
+for (let i = 0; i < amplitudes.length; ++i) {
+    yield* opacity(
+      amplitudes[i] * 3,
+      1 / 5
+    );
+  }
+#+end_src
+
+In that example, I am using =1 / 5= for the duration, because each timestep takes 1/5 seconds, and I have multiplied the amplitude by 3 such that it will be maximally opaque whilst only achieving a third of the maximum amplitude.
