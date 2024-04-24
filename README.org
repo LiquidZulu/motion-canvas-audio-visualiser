@@ -35,6 +35,7 @@ See =src/scenes/visualiser.tsx= for example usage. =src/index.ts= provides an =a
 
 For example, I can create an opacity signal:
 #+begin_src typescript
+import { audiowaveformAmplitudes } from 'motion-canvas-audio-visualiser';
 import audioJSON from "../data/test.mp3.json";
 const amplitudes = audiowaveformAmplitudes(audioJSON);
 const opacity = createSignal(amplitudes[0]);
