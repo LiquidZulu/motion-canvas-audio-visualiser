@@ -12,14 +12,14 @@ ffprobe src/data/test.mp3
 #+end_src
 
 Which should yield something like:
-#+begin_export ascii
+#+begin_src
 ffprobe version 5.1.3 Copyright (c) 2007-2022 the FFmpeg developers
   built with gcc 12.2.0 (GCC)
   configuration: ...
 Input #0, mp3, from 'src/data/test.mp3':
   Duration: 00:00:03.79, start: 0.025057, bitrate: 85 kb/s
   Stream #0:0: Audio: mp3, 44100 Hz, mono, fltp, 85 kb/s
-#+end_export
+#+end_src
 
 Here, we can see that =test.mp3= is at 44100 Hz, but we do not need anywhere close to this resolution. I find that about 5 samples a second works for me, so I would use 44100 / 5 = 8820 for the next step.
 

@@ -1,22 +1,22 @@
 
 # Table of Contents
 
-1.  [Guide](#org30357f4)
-    1.  [Get The Sample Rate](#org984c381)
-    2.  [Process the Audio with `audiowaveform`](#orge3adf18)
-    3.  [Import The Processed Audio Into Motion Canvas](#org50ce85d)
+1.  [Guide](#orgee7f812)
+    1.  [Get The Sample Rate](#orgd97f203)
+    2.  [Process the Audio with `audiowaveform`](#org65532ea)
+    3.  [Import The Processed Audio Into Motion Canvas](#orgd69af95)
 
 Audio visualisation with [Motion Canvas](https://motioncanvas.io) and [audiowaveform](https://github.com/bbc/audiowaveform/).
 
 
-<a id="org30357f4"></a>
+<a id="orgee7f812"></a>
 
 # Guide
 
 For the purposes of this guide, I will use `src/data/test.mp3`.
 
 
-<a id="org984c381"></a>
+<a id="orgd97f203"></a>
 
 ## Get The Sample Rate
 
@@ -26,19 +26,26 @@ You can acquire the sample rate using `ffprobe`:
 
 Which should yield something like:
 
+    ffprobe version 5.1.3 Copyright (c) 2007-2022 the FFmpeg developers
+      built with gcc 12.2.0 (GCC)
+      configuration: ...
+    Input #0, mp3, from 'src/data/test.mp3':
+      Duration: 00:00:03.79, start: 0.025057, bitrate: 85 kb/s
+      Stream #0:0: Audio: mp3, 44100 Hz, mono, fltp, 85 kb/s
+
 Here, we can see that `test.mp3` is at 44100 Hz, but we do not need anywhere close to this resolution. I find that about 5 samples a second works for me, so I would use 44100 / 5 = 8820 for the next step.
 
 
-<a id="orge3adf18"></a>
+<a id="org65532ea"></a>
 
 ## Process the Audio with `audiowaveform`
 
     audiowaveform -i src/data/test.mp3 -o src/data/test.mp3.json -z 8820
 
-The `-z 8820` argument refers to the level of &ldquo;zoom,&rdquo; or how many samples should be used for a single entry into the new JSON file. This should be calculated based upon the [sample rate](#org984c381).
+The `-z 8820` argument refers to the level of &ldquo;zoom,&rdquo; or how many samples should be used for a single entry into the new JSON file. This should be calculated based upon the [sample rate](#orgd97f203).
 
 
-<a id="org50ce85d"></a>
+<a id="orgd69af95"></a>
 
 ## Import The Processed Audio Into Motion Canvas
 
@@ -68,7 +75,7 @@ And use that opacity for a ring around an image:
       ...
     };
 
-Which can then be updated according to how long each timestep is based on the [sample rate](#org984c381):
+Which can then be updated according to how long each timestep is based on the [sample rate](#orgd97f203):
 
     for (let i = 0; i < amplitudes.length; ++i) {
         yield* opacity(
