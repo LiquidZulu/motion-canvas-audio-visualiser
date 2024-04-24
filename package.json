@@ -1,10 +1,24 @@
 {
   "name": "visualiser",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "1.0.0",
+  "homepage": "https://github.com/LiquidZulu/motion-canvas-audio-visualiser",
+  "keywords": ["motion", "canvas", "motioncanvas", "audiowaveform"],
+  "bugs": {
+    "url": "https://github.com/LiquidZulu/motion-canvas-audio-visualiser/issues",
+    "email": "liquidzulu+motion-canvas-audio-visualiser@pm.me"
+  },
+  "author": "LiquidZulu <liquidzulu@pm.me> (http://liquidzulu.github.io)",
+  "funding": {
+    "type": "individual",
+    "url": "https://ko-fi.com/liquidzulu"
+  },
+  "main": "dist/index.js",
+  "license": "Unlicense",
+  "types": "dist/index.d.ts",
   "scripts": {
     "serve": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc -p ."
   },
   "dependencies": {
     "@motion-canvas/2d": "^3.11.0",
