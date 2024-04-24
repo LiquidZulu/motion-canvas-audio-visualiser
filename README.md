@@ -1,22 +1,22 @@
 
 # Table of Contents
 
-1.  [Guide](#orgee7f812)
-    1.  [Get The Sample Rate](#orgd97f203)
-    2.  [Process the Audio with `audiowaveform`](#org65532ea)
-    3.  [Import The Processed Audio Into Motion Canvas](#orgd69af95)
+1.  [Guide](#org7be14fb)
+    1.  [Get The Sample Rate](#org3219e93)
+    2.  [Process the Audio with `audiowaveform`](#org26f6a1b)
+    3.  [Import The Processed Audio Into Motion Canvas](#org3950c5a)
 
 Audio visualisation with [Motion Canvas](https://motioncanvas.io) and [audiowaveform](https://github.com/bbc/audiowaveform/).
 
 
-<a id="orgee7f812"></a>
+<a id="org7be14fb"></a>
 
 # Guide
 
 For the purposes of this guide, I will use `src/data/test.mp3`.
 
 
-<a id="orgd97f203"></a>
+<a id="org3219e93"></a>
 
 ## Get The Sample Rate
 
@@ -36,16 +36,16 @@ Which should yield something like:
 Here, we can see that `test.mp3` is at 44100 Hz, but we do not need anywhere close to this resolution. I find that about 5 samples a second works for me, so I would use 44100 / 5 = 8820 for the next step.
 
 
-<a id="org65532ea"></a>
+<a id="org26f6a1b"></a>
 
 ## Process the Audio with `audiowaveform`
 
     audiowaveform -i src/data/test.mp3 -o src/data/test.mp3.json -z 8820
 
-The `-z 8820` argument refers to the level of &ldquo;zoom,&rdquo; or how many samples should be used for a single entry into the new JSON file. This should be calculated based upon the [sample rate](#orgd97f203).
+The `-z 8820` argument refers to the level of &ldquo;zoom,&rdquo; or how many samples should be used for a single entry into the new JSON file. This should be calculated based upon the [sample rate](#org3219e93).
 
 
-<a id="orgd69af95"></a>
+<a id="org3950c5a"></a>
 
 ## Import The Processed Audio Into Motion Canvas
 
@@ -53,6 +53,7 @@ See `src/scenes/visualiser.tsx` for example usage. `src/index.ts` provides an `a
 
 For example, I can create an opacity signal:
 
+    import { audiowaveformAmplitudes } from 'motion-canvas-audio-visualiser';
     import audioJSON from "../data/test.mp3.json";
     const amplitudes = audiowaveformAmplitudes(audioJSON);
     const opacity = createSignal(amplitudes[0]);
@@ -75,7 +76,7 @@ And use that opacity for a ring around an image:
       ...
     };
 
-Which can then be updated according to how long each timestep is based on the [sample rate](#orgd97f203):
+Which can then be updated according to how long each timestep is based on the [sample rate](#org3219e93):
 
     for (let i = 0; i < amplitudes.length; ++i) {
         yield* opacity(
