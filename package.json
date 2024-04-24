@@ -1,7 +1,7 @@
 {
   "name": "motion-canvas-audio-visualiser",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/LiquidZulu/motion-canvas-audio-visualiser",
   "keywords": ["motion", "canvas", "motioncanvas", "audiowaveform"],
   "bugs": {
